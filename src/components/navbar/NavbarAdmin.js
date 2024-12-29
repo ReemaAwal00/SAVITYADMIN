@@ -102,7 +102,7 @@ export default function AdminNavbar(props) {
 						</BreadcrumbItem>
 					</Breadcrumb>
 					{/* Here we create navbar brand, based on route name */}
-					<Link
+					{/* <Link
 						color={mainText}
 						href='#'
 						bg='inherit'
@@ -119,7 +119,7 @@ export default function AdminNavbar(props) {
 							boxShadow: 'none'
 						}}>
 						Dashboard
-					</Link>
+					</Link> */}
 				</Box>
 
 				{/* //profile bar */}

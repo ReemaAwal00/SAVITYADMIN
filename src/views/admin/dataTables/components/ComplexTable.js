@@ -1,243 +1,72 @@
-/* eslint-disable */
-
+import React, { useState } from "react";
 import {
   Box,
-  Flex,
-  Icon,
-  Progress,
+  SimpleGrid,
+  Select,
   Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
   Thead,
+  Tbody,
   Tr,
-  useColorModeValue,
-} from '@chakra-ui/react';
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-// Custom components
-import Card from 'components/card/Card';
-import Menu from 'components/menu/MainMenu';
-import * as React from 'react';
-// Assets
-import { MdCancel, MdCheckCircle, MdOutlineError } from 'react-icons/md';
+  Th,
+  Td,
+} from "@chakra-ui/react";
 
-const columnHelper = createColumnHelper();
+const tableDataUser = [
+  { name: "John Doe", address: "123 Main St", email: "john@example.com", contact: "123-456-7890" },
+  { name: "Jane Smith", address: "456 Elm St", email: "jane@example.com", contact: "987-654-3210" },
+];
 
-// const columns = columnsDataCheck;
-export default function ComplexTable(props) {
-  const { tableData } = props;
-  const [sorting, setSorting] = React.useState([]);
-  const textColor = useColorModeValue('secondaryGray.900', 'white');
-  const borderColor = useColorModeValue('gray.200', 'whiteAlpha.100');
-  let defaultData = tableData;
-  const columns = [
-    columnHelper.accessor('name', {
-      id: 'name',
-      header: () => (
-        <Text
-          justifyContent="space-between"
-          align="center"
-          fontSize={{ sm: '10px', lg: '12px' }}
-          color="gray.400"
-        >
-          NAME
-        </Text>
-      ),
-      cell: (info) => (
-        <Flex align="center">
-          <Text color={textColor} fontSize="sm" fontWeight="700">
-            {info.getValue()}
-          </Text>
-        </Flex>
-      ),
-    }),
-    columnHelper.accessor('status', {
-      id: 'status',
-      header: () => (
-        <Text
-          justifyContent="space-between"
-          align="center"
-          fontSize={{ sm: '10px', lg: '12px' }}
-          color="gray.400"
-        >
-          STATUS
-        </Text>
-      ),
-      cell: (info) => (
-        <Flex align="center">
-          <Icon
-            w="24px"
-            h="24px"
-            me="5px"
-            color={
-              info.getValue() === 'Approved'
-                ? 'green.500'
-                : info.getValue() === 'Disable'
-                ? 'red.500'
-                : info.getValue() === 'Error'
-                ? 'orange.500'
-                : null
-            }
-            as={
-              info.getValue() === 'Approved'
-                ? MdCheckCircle
-                : info.getValue() === 'Disable'
-                ? MdCancel
-                : info.getValue() === 'Error'
-                ? MdOutlineError
-                : null
-            }
-          />
-          <Text color={textColor} fontSize="sm" fontWeight="700">
-            {info.getValue()}
-          </Text>
-        </Flex>
-      ),
-    }),
-    columnHelper.accessor('date', {
-      id: 'date',
-      header: () => (
-        <Text
-          justifyContent="space-between"
-          align="center"
-          fontSize={{ sm: '10px', lg: '12px' }}
-          color="gray.400"
-        >
-          DATE
-        </Text>
-      ),
-      cell: (info) => (
-        <Text color={textColor} fontSize="sm" fontWeight="700">
-          {info.getValue()}
-        </Text>
-      ),
-    }),
-    columnHelper.accessor('progress', {
-      id: 'progress',
-      header: () => (
-        <Text
-          justifyContent="space-between"
-          align="center"
-          fontSize={{ sm: '10px', lg: '12px' }}
-          color="gray.400"
-        >
-          PROGRESS
-        </Text>
-      ),
-      cell: (info) => (
-        <Flex align="center">
-          <Progress
-            variant="table"
-            colorScheme="brandScheme"
-            h="8px"
-            w="108px"
-            value={info.getValue()}
-          />
-        </Flex>
-      ),
-    }),
-  ];
-  const [data, setData] = React.useState(() => [...defaultData]);
-  const table = useReactTable({
-    data,
-    columns,
-    state: {
-      sorting,
-    },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    debugTable: true,
-  });
+const tableDataDoctor = [
+  { name: "Dr. Alice", address: "789 Oak St", email: "alice@clinic.com", contact: "555-111-2222" },
+  { name: "Dr. Bob", address: "321 Pine St", email: "bob@clinic.com", contact: "555-333-4444" },
+];
+
+export default function Settings() {
+  const [selectedType, setSelectedType] = useState("User");
+
+  // Determine table data based on selection
+  const tableData = selectedType === "User" ? tableDataUser : tableDataDoctor;
+
   return (
-    <Card
-      flexDirection="column"
-      w="100%"
-      px="0px"
-      overflowX={{ sm: 'scroll', lg: 'hidden' }}
-    >
-      <Flex px="25px" mb="8px" justifyContent="space-between" align="center">
-        <Text
-          color={textColor}
-          fontSize="22px"
-          fontWeight="700"
-          lineHeight="100%"
-        >
-          Complex Table
-        </Text>
-        <Menu />
-      </Flex>
-      <Box>
-        <Table variant="simple" color="gray.500" mb="24px" mt="12px">
+    <Box pt={{ base: "50px", md: "100px", xl: "10px" }}> {/* Reduced padding under breadcrumbs */}
+      {/* Dropdown to select User or Doctor */}
+      <Select
+        mb="20px"
+        w="200px"
+        onChange={(e) => setSelectedType(e.target.value)}
+        value={selectedType}
+      >
+        <option value="User">User</option>
+        <option value="Doctor">Doctor</option>
+      </Select>
+
+      {/* Table to display data */}
+      <SimpleGrid
+        mb="20px"
+        columns={1}
+        spacing={{ base: "20px", xl: "20px" }}
+      >
+        <Table variant="simple">
           <Thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <Tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <Th
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      pe="10px"
-                      borderColor={borderColor}
-                      cursor="pointer"
-                      onClick={header.column.getToggleSortingHandler()}
-                    >
-                      <Flex
-                        justifyContent="space-between"
-                        align="center"
-                        fontSize={{ sm: '10px', lg: '12px' }}
-                        color="gray.400"
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                        {{
-                          asc: '',
-                          desc: '',
-                        }[header.column.getIsSorted()] ?? null}
-                      </Flex>
-                    </Th>
-                  );
-                })}
-              </Tr>
-            ))}
+            <Tr>
+              <Th>Name</Th>
+              <Th>Address</Th>
+              <Th>Email</Th>
+              <Th>Contact</Th>
+            </Tr>
           </Thead>
           <Tbody>
-            {table
-              .getRowModel()
-              .rows.slice(0, 11)
-              .map((row) => {
-                return (
-                  <Tr key={row.id}>
-                    {row.getVisibleCells().map((cell) => {
-                      return (
-                        <Td
-                          key={cell.id}
-                          fontSize={{ sm: '14px' }}
-                          minW={{ sm: '150px', md: '200px', lg: 'auto' }}
-                          borderColor="transparent"
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </Td>
-                      );
-                    })}
-                  </Tr>
-                );
-              })}
+            {tableData.map((row, index) => (
+              <Tr key={index}>
+                <Td>{row.name}</Td>
+                <Td>{row.address}</Td>
+                <Td>{row.email}</Td>
+                <Td>{row.contact}</Td>
+              </Tr>
+            ))}
           </Tbody>
         </Table>
-      </Box>
-    </Card>
+      </SimpleGrid>
+    </Box>
   );
 }

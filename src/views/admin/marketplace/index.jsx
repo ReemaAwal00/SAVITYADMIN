@@ -1,56 +1,70 @@
-
-
-import React from "react";
-
-// Chakra imports
+import React, { useState } from "react";
 import {
   Box,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
   Button,
-  Flex,
-  Grid,
-  Link,
-  Text,
-  useColorModeValue,
-  SimpleGrid,
 } from "@chakra-ui/react";
 
-// Custom components
-import Banner from "views/admin/marketplace/components/Banner";
-import TableTopCreators from "views/admin/marketplace/components/TableTopCreators";
-import HistoryItem from "views/admin/marketplace/components/HistoryItem";
-import NFT from "components/card/NFT";
-import Card from "components/card/Card.js";
-
-// Assets
-import Nft1 from "assets/img/nfts/Nft1.png";
-import Nft2 from "assets/img/nfts/Nft2.png";
-import Nft3 from "assets/img/nfts/Nft3.png";
-import Nft4 from "assets/img/nfts/Nft4.png";
-import Nft5 from "assets/img/nfts/Nft5.png";
-import Nft6 from "assets/img/nfts/Nft6.png";
-import Avatar1 from "assets/img/avatars/avatar1.png";
-import Avatar2 from "assets/img/avatars/avatar2.png";
-import Avatar3 from "assets/img/avatars/avatar3.png";
-import Avatar4 from "assets/img/avatars/avatar4.png";
-import tableDataTopCreators from "views/admin/marketplace/variables/tableDataTopCreators.json";
-import { tableColumnsTopCreators } from "views/admin/marketplace/variables/tableColumnsTopCreators";
+const tableData = [
+  {
+    title: "React Basics",
+    description: "Introduction to React.js",
+    video: "https://example.com/react-basics",
+  },
+  {
+    title: "Advanced React",
+    description: "Deep dive into React hooks",
+    video: "https://example.com/advanced-react",
+  },
+  {
+    title: "React State Management",
+    description: "Managing state in React applications",
+    video: "https://example.com/react-state-management",
+  },
+];
 
 export default function Marketplace() {
-  // Chakra Color Mode
-  const textColor = useColorModeValue("secondaryGray.900", "white");
-  const textColorBrand = useColorModeValue("brand.500", "white");
+  const handleUpdate = (index) => {
+    console.log(`Update clicked for row ${index}`);
+    // Add update logic here
+  };
+
   return (
-    <Box pt={{ base: "180px", md: "80px", xl: "80px" }}>
-      {/* Main Fields */}
-      <Grid
-        mb='20px'
-        gridTemplateColumns={{ xl: "repeat(3, 1fr)", "2xl": "1fr 0.46fr" }}
-        gap={{ base: "20px", xl: "20px" }}
-        display={{ base: "block", xl: "grid" }}>
-       
-       
-      </Grid>
-      {/* Delete Product */}
+    <Box pt={{ base: "180px", md: "80px", xl: "50px" }}>
+      {/* Table to display data */}
+      <Table variant="simple">
+        <Thead>
+          <Tr>
+            <Th>Title</Th>
+            <Th>Description</Th>
+            <Th>Video (URL)</Th>
+            <Th>Action</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {tableData.map((row, index) => (
+            <Tr key={index}>
+              <Td>{row.title}</Td>
+              <Td>{row.description}</Td>
+              <Td>
+                <a href={row.video} target="_blank" rel="noopener noreferrer">
+                  {row.video}
+                </a>
+              </Td>
+              <Td>
+                <Button colorScheme="blue" onClick={() => handleUpdate(index)}>
+                  Update
+                </Button>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
     </Box>
   );
 }

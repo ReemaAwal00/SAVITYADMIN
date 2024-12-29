@@ -28,7 +28,7 @@ const routes = [
     component: <MainDashboard />,
   },
   {
-    name: 'Total Users',
+    name: 'Resources',
     layout: '/admin',
     path: '/nft-marketplace',
     icon: (
@@ -43,7 +43,7 @@ const routes = [
     secondary: true,
   },
   {
-    name: 'Resources ',
+    name: 'Total members ',
     layout: '/admin',
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
     path: '/data-tables',
@@ -62,12 +62,12 @@ const routes = [
     name: 'Volunteer',
     layout: '/rtl',
     path: '/rtl-default',
-    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+    icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
     component: <RTL />,
   },
 
   {
-    name: 'Sign In',
+    name: 'Log Out',
     layout: '/auth',
     path: '/sign-in',
     icon: <Icon as={MdLock} width="20px" height="20px" color="inherit" />,
