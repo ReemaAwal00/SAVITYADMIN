@@ -2,7 +2,7 @@ const pool = require('../db');
 
 // Function to get all doctor credentials
 const getAllDoctors = async () => {
-  const query = 'SELECT email, password, address, contact, hospital, doctor_id FROM doctors';
+  const query = 'SELECT name, email, password, address, contact, hospital, doctor_id FROM doctors';
   const result = await pool.query(query);
   return result.rows; // Returns an array of doctor records
 };

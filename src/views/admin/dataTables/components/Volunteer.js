@@ -32,7 +32,7 @@ const tableDataDoctor = [
   { name: "Dr. Bob", address: "321 Pine St", email: "bob@clinic.com", contact: "555-333-4444", hospital: "Green Valley Clinic" },
 ];
 
-export default function Settings() {
+export default function Volunteer() {
   const [selectedType, setSelectedType] = useState("User");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [doctorData, setDoctorData] = useState({ name: "", address: "", email: "", contact: "", hospital: "", password:"" });

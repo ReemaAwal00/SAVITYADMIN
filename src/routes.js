@@ -14,23 +14,24 @@ import MainDashboard from 'views/admin/default';
 import NFTMarketplace from 'views/admin/marketplace';
 import Profile from 'views/admin/profile';
 import DataTables from 'views/admin/dataTables';
-import RTL from 'views/admin/rtl';
+
 
 // Auth Imports
 import SignInCentered from 'views/auth/signIn';
+import Volunteer from 'views/admin/volunteer';
 
 const routes = [
   {
     name: 'Dashboard',
     layout: '/admin',
-    path: '/default',
+    path: '/dashboard',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     component: <MainDashboard />,
   },
   {
     name: 'Resources',
     layout: '/admin',
-    path: '/nft-marketplace',
+    path: '/resource',
     icon: (
       <Icon
         as={MdPerson}
@@ -60,10 +61,10 @@ const routes = [
   
   {
     name: 'Volunteer',
-    layout: '/rtl',
-    path: '/rtl-default',
+    layout: '/admin',
+    path: '/volunteer',
     icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
-    component: <RTL />,
+    component: <Volunteer />,
   },
 
   {
