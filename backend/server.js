@@ -4,6 +4,9 @@ const userRoutes = require('./routes/userRoutes');
 const doctorRoutes = require('./routes/doctorRoutes');
 const volunteerRoutes = require('./routes/volunteerRoutes');
 const resourceRoutes = require('./routes/resourceRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
+
 require('dotenv').config();
 
 const app = express();
@@ -42,6 +45,8 @@ app.use('/users', userRoutes);
 app.use('/doctors', doctorRoutes);
 app.use('/volunteers', volunteerRoutes);
 app.use('/resources', resourceRoutes);
+app.use('/bookings', bookingRoutes);
+app.use('/appointments', appointmentRoutes);
 
 
 // Start server

@@ -4,7 +4,7 @@ const pool = require('../db');
 const getAllAppointments = async () => {
   const query = `
     SELECT 
-      id, patient_name, name, email, schedule_date, 
+      id, patient_name, email, schedule_date, 
       schedule_time, contact, status, doctor_id 
     FROM appointments;
   `;
@@ -14,17 +14,17 @@ const getAllAppointments = async () => {
 
 // Function to insert a new appointment
 const insertAppointment = async (
-  patientName, doctorName, email, scheduleDate, scheduleTime, contact, status, doctorId
+  patientName, email, scheduleDate, scheduleTime, contact, doctorId
 ) => {
   try {
     const appointmentId = require('uuid').v4(); // Generate a UUID for appointment ID
     const query = `
       INSERT INTO appointments 
-      (id, patient_name, name, email, schedule_date, schedule_time, contact, status, doctor_id) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+      (id, patient_name, email, schedule_date, schedule_time, contact, doctor_id) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7) 
       RETURNING *;
     `;
-    const values = [appointmentId, patientName, doctorName, email, scheduleDate, scheduleTime, contact, status, doctorId];
+    const values = [appointmentId, patientName, email, scheduleDate, scheduleTime, contact, doctorId];
 
     const result = await pool.query(query, values);
     return result.rows[0]; // Return the inserted appointment data

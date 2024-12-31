@@ -13,17 +13,17 @@ const getAllAppointments = async (req, res) => {
 // Controller function to add an appointment
 const addAppointment = async (req, res) => {
   const { 
-    patientName, doctorName, email, scheduleDate, 
-    scheduleTime, contact, status, doctorId 
+    patientName, email, scheduleDate, 
+    scheduleTime, contact, doctorId 
   } = req.body;
 
-  if (!patientName || !doctorName || !email || !scheduleDate || !scheduleTime || !contact || status === undefined || !doctorId) {
+  if (!patientName  || !email || !scheduleDate || !scheduleTime || !contact ||  !doctorId) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
     const newAppointment = await appointmentModel.insertAppointment(
-      patientName, doctorName, email, scheduleDate, scheduleTime, contact, status, doctorId
+      patientName, email, scheduleDate, scheduleTime, contact, doctorId
     );
     res.status(201).json({
       message: 'Appointment added successfully',

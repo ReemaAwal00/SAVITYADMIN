@@ -29,12 +29,12 @@ const routes = [
     component: <MainDashboard />,
   },
   {
-    name: 'Resources',
+    name: 'Content management',
     layout: '/admin',
     path: '/resource',
     icon: (
       <Icon
-        as={MdPerson}
+        as={MdBarChart}
         width="20px"
         height="20px"
         color="inherit"
@@ -44,23 +44,23 @@ const routes = [
     secondary: true,
   },
   {
-    name: 'Total members ',
+    name: 'User management ',
     layout: '/admin',
-    icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
-    path: '/data-tables',
+    icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
+    path: '/members',
     component: <DataTables />,
   },
   {
-    name: 'Quiz Data',
+    name: 'Quiz Management',
     layout: '/admin',
-    path: '/profile',
+    path: '/quiz',
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
     component: <Profile />,
   },
  
   
   {
-    name: 'Volunteer',
+    name: 'Volunteer details',
     layout: '/admin',
     path: '/volunteer',
     icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
