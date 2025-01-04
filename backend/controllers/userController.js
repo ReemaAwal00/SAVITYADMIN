@@ -7,7 +7,7 @@ const getAllUsers = async (req, res) => {
     const user = await userModel.getAllUsers();
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching admin data', error });
+    res.status(500).json({ message: 'Error fetching user data', error });
   }
 };
 
