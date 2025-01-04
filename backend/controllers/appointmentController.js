@@ -1,3 +1,4 @@
+const { use } = require('react');
 const appointmentModel = require('../models/appointmentModel');
 
 // Controller function to fetch all appointments
@@ -14,16 +15,16 @@ const getAllAppointments = async (req, res) => {
 const addAppointment = async (req, res) => {
   const { 
     patientName, email, scheduleDate, 
-    scheduleTime, contact, doctorId 
+    scheduleTime, contact, doctorId, userId
   } = req.body;
 
-  if (!patientName  || !email || !scheduleDate || !scheduleTime || !contact ||  !doctorId) {
+  if (!patientName  || !email || !scheduleDate || !scheduleTime || !contact ||  !doctorId || !userId) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
     const newAppointment = await appointmentModel.insertAppointment(
-      patientName, email, scheduleDate, scheduleTime, contact, doctorId
+      patientName, email, scheduleDate, scheduleTime, contact, doctorId, userId
     );
     res.status(201).json({
       message: 'Appointment added successfully',
