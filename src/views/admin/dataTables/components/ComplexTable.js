@@ -19,41 +19,42 @@ import {
   ModalFooter,
   Input,
 } from "@chakra-ui/react";
-import { insertAllDoctors } from "services/doctorApi";
-import { getAllDoctors } from "services/doctorApi";
-
-const tableDataUser = [
-  { name: "John Doe", address: "123 Main St", email: "john@example.com", contact: "123-456-7890" },
-  { name: "Jane Smith", address: "456 Elm St", email: "jane@example.com", contact: "987-654-3210" },
-];
-
-const tableDataDoctor = [
-  { name: "Dr. Alice", address: "789 Oak St", email: "alice@clinic.com", contact: "555-111-2222", hospital: "City Hospital" },
-  { name: "Dr. Bob", address: "321 Pine St", email: "bob@clinic.com", contact: "555-333-4444", hospital: "Green Valley Clinic" },
-];
+import { insertAllDoctors, getAllDoctors } from "services/doctorApi";
+import { getAllUsers, deleteUser } from "services/userApi";  // Import deleteUser function
 
 export default function Settings() {
   const [selectedType, setSelectedType] = useState("User");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [doctorData, setDoctorData] = useState({ name: "", address: "", email: "", contact: "", hospital: "", password:"" });
+  const [doctorData, setDoctorData] = useState({ name: "", address: "", email: "", contact: "", hospital: "", password: "" });
   const [doctors, setDoctors] = useState([]);
+  const [users, setUsers] = useState([]);
 
-  // Fetch doctors data from the server on component mount
+  // Fetch data for users and doctors on component mount
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await getAllDoctors(); // Use the getAllDoctors function from services
+        const response = await getAllDoctors(); // Fetch doctors data from API
         setDoctors(response); // Assuming response is an array of doctors
       } catch (error) {
         console.error("Error fetching doctors:", error);
       }
     };
 
+    const fetchUsers = async () => {
+      try {
+        const response = await getAllUsers(); // Fetch users data from API
+        setUsers(response); // Assuming response is an array of users
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
     fetchDoctors();
+    fetchUsers();
   }, []);
 
-
-  const tableData = selectedType === "User" ? tableDataUser : doctors;
+  // Set table data based on selected type
+  const tableData = selectedType === "User" ? users : doctors;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -61,29 +62,37 @@ export default function Settings() {
   };
 
   const handleAddDoctor = () => {
-    // Log the doctorData to check if it's ready for submission
-    console.log("Data ready to be sent to the server:", doctorData);
-
     // Post doctor data to the database
     insertAllDoctors(doctorData)
       .then((response) => {
-        // Optionally handle the response from the API (e.g., success message)
+        // Successfully added doctor
         console.log('Doctor added:', response);
-        
-        // Update state after successfully adding the doctor
+
+        // Update state after adding doctor
         setDoctors([...doctors, doctorData]);
-        setDoctorData({ name: "", address: "", email: "", contact: "", hospital: "", password:"" });
+        setDoctorData({ name: "", address: "", email: "", contact: "", hospital: "", password: "" });
         setIsModalOpen(false);
       })
       .catch((error) => {
-        // Handle error (e.g., show error message)
         console.error('Error adding doctor:', error);
       });
   };
 
+  // Handle delete for users or doctors based on selectedType
+  // const handleDelete = async (index) => {
+  //   if (selectedType === "User") {
+  //     const userId = users[index].id; // Assuming users have unique IDs
+  //     try {
+  //       await deleteUser(userId); // Delete the user from API
+  //       setUsers(users.filter((_, i) => i !== index)); // Remove from state
+  //     } catch (error) {
+  //       console.error("Error deleting user:", error);
+  //     }
+  //   } 
+  // };
 
   return (
-    <Box pt={{ base: "50px", md: "100px", xl: "10px" }}> {/* Reduced padding under breadcrumbs */}
+    <Box pt={{ base: "50px", md: "100px", xl: "10px" }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb="20px">
         <Select
           w="200px"
@@ -100,30 +109,35 @@ export default function Settings() {
         )}
       </Box>
       <SimpleGrid mb="20px" columns={1} spacing={{ base: "20px", xl: "20px" }}>
-      <Table variant="simple">
-        <Thead>
-          <Tr>
-            <Th>Name</Th>
-            <Th>Address</Th>
-            <Th>Email</Th>
-            <Th>Contact</Th>
-            <Th>Hospital</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {/* Map over the doctors state and display each doctor's data */}
-          {doctors.map((doctor, index) => (
-            <Tr key={index}>
-              <Td>{doctor.name}</Td>
-              <Td>{doctor.address}</Td>
-              <Td>{doctor.email}</Td>
-              <Td>{doctor.contact}</Td>
-              <Td>{doctor.hospital}</Td>
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Name</Th>
+              {/* <Th>Address</Th> */}
+              <Th>Email</Th>
+              {/* <Th>Contact</Th> */}
+              {selectedType === "Doctor" && <Th>Hospital</Th>}
+              <Th>Action</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </SimpleGrid>
+          </Thead>
+          <Tbody>
+            {tableData.map((data, index) => (
+              <Tr key={index}>
+                <Td>{data.username}</Td>
+                {/* <Td>{data.address}</Td> */}
+                <Td>{data.email}</Td>
+                {/* <Td>{data.contact}</Td> */}
+                {selectedType === "Doctor" && <Td>{data.hospital}</Td>}
+                <Td>
+                  <Button colorScheme="red" >
+                    Delete
+                  </Button>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </SimpleGrid>
 
       {/* Modal for adding doctor */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
@@ -174,7 +188,6 @@ export default function Settings() {
               onChange={handleInputChange}
               mb="10px"
             />
-            
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="teal" onClick={handleAddDoctor} mr="3">

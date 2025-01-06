@@ -1,18 +1,17 @@
 const userModel = require('../models/userModel');
-const { insertUsers } = require('../models/userModel');
+const { insertUsers, deleteUser } = require('../models/userModel');
 
-// Controller function to handle fetching all admin credentials
+// Controller function to handle fetching all users
 const getAllUsers = async (req, res) => {
   try {
-    const user = await userModel.getAllUsers();
-    res.status(200).json(user);
+    const users = await userModel.getAllUsers();
+    res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching user data', error });
   }
 };
 
-
-// Controller function to add a doctor
+// Controller function to add a user
 const addUser = async (req, res) => {
   const { username, email, password } = req.body;
 
@@ -32,7 +31,28 @@ const addUser = async (req, res) => {
   }
 };
 
+// Controller function to delete a user by user_id
+const deleteUserController = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+  try {
+    const deletedUser = await deleteUser(userId);
+    res.status(200).json({
+      message: 'User deleted successfully',
+      deletedUser,
+    });
+  } catch (error) {
+    console.error('Error deleting user:', error.message);
+    res.status(500).json({ error: 'An error occurred while deleting the user' });
+  }
+};
+
 module.exports = {
   getAllUsers,
   addUser,
+  deleteUserController,
 };
