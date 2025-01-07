@@ -101,37 +101,10 @@ export default function AdminNavbar(props) {
 							</BreadcrumbLink>
 						</BreadcrumbItem>
 					</Breadcrumb>
-					{/* Here we create navbar brand, based on route name */}
-					{/* <Link
-						color={mainText}
-						href='#'
-						bg='inherit'
-						borderRadius='inherit'
-						fontWeight='bold'
-						fontSize='28px'
-						_hover={{ color: { mainText } }}
-						_active={{
-							bg: 'inherit',
-							transform: 'none',
-							borderColor: 'transparent'
-						}}
-						_focus={{
-							boxShadow: 'none'
-						}}>
-						Dashboard
-					</Link> */}
+					
 				</Box>
 
-				{/* //profile bar */}
-				{/* <Box ms='auto' w={{ sm: '100%', md: 'unset' }}>
-					<AdminNavbarLinks
-						onOpen={props.onOpen}
-						logoText={props.logoText}
-						secondary={props.secondary}
-						fixed={props.fixed}
-						scrolled={scrolled}
-					/>
-				</Box> */}
+				
 			</Flex>
 			{secondary ? <Text color='white'>{message}</Text> : null}
 		</Box>

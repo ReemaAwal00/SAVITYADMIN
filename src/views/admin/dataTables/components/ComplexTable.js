@@ -128,11 +128,16 @@ export default function Settings() {
                 <Td>{data.email}</Td>
                 {/* <Td>{data.contact}</Td> */}
                 {selectedType === "Doctor" && <Td>{data.hospital}</Td>}
-                <Td>
+                <Td style={{ padding: "10px", marginLeft:"10px", gap:"10px" }}>
+                  <Button colorScheme="green" >
+                    Update
+                  </Button>
+                 
                   <Button colorScheme="red" >
                     Delete
                   </Button>
                 </Td>
+                
               </Tr>
             ))}
           </Tbody>
