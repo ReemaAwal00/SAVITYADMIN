@@ -20,41 +20,43 @@ import {
   Input,
 } from "@chakra-ui/react";
 import { insertAllDoctors, getAllDoctors } from "services/doctorApi";
-import { getAllUsers, deleteUser } from "services/userApi";  // Import deleteUser function
+import { getAllUsers, deleteUser } from "services/userApi";
 
 export default function Settings() {
   const [selectedType, setSelectedType] = useState("User");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [doctorData, setDoctorData] = useState({ name: "", address: "", email: "", contact: "", hospital: "", password: "" });
+  const [doctorData, setDoctorData] = useState({
+    name: "",
+    address: "",
+    email: "",
+    contact: "",
+    hospital: "",
+    password: "",
+  });
   const [doctors, setDoctors] = useState([]);
   const [users, setUsers] = useState([]);
 
-  // Fetch data for users and doctors on component mount
-  useEffect(() => {
-    const fetchDoctors = async () => {
+  const fetchData = async () => {
+    if (selectedType === "Doctor") {
       try {
-        const response = await getAllDoctors(); // Fetch doctors data from API
-        setDoctors(response); // Assuming response is an array of doctors
+        const response = await getAllDoctors();
+        setDoctors(response);
       } catch (error) {
         console.error("Error fetching doctors:", error);
       }
-    };
-
-    const fetchUsers = async () => {
+    } else if (selectedType === "User") {
       try {
-        const response = await getAllUsers(); // Fetch users data from API
-        setUsers(response); // Assuming response is an array of users
+        const response = await getAllUsers();
+        setUsers(response);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
-    };
+    }
+  };
 
-    fetchDoctors();
-    fetchUsers();
-  }, []);
-
-  // Set table data based on selected type
-  const tableData = selectedType === "User" ? users : doctors;
+  useEffect(() => {
+    fetchData();
+  }, [selectedType]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -62,34 +64,96 @@ export default function Settings() {
   };
 
   const handleAddDoctor = () => {
-    // Post doctor data to the database
     insertAllDoctors(doctorData)
       .then((response) => {
-        // Successfully added doctor
-        console.log('Doctor added:', response);
-
-        // Update state after adding doctor
+        console.log("Doctor added:", response);
         setDoctors([...doctors, doctorData]);
-        setDoctorData({ name: "", address: "", email: "", contact: "", hospital: "", password: "" });
+        setDoctorData({
+          name: "",
+          address: "",
+          email: "",
+          contact: "",
+          hospital: "",
+          password: "",
+        });
         setIsModalOpen(false);
       })
       .catch((error) => {
-        console.error('Error adding doctor:', error);
+        console.error("Error adding doctor:", error);
       });
   };
 
-  // Handle delete for users or doctors based on selectedType
-  // const handleDelete = async (index) => {
-  //   if (selectedType === "User") {
-  //     const userId = users[index].id; // Assuming users have unique IDs
-  //     try {
-  //       await deleteUser(userId); // Delete the user from API
-  //       setUsers(users.filter((_, i) => i !== index)); // Remove from state
-  //     } catch (error) {
-  //       console.error("Error deleting user:", error);
-  //     }
-  //   } 
-  // };
+  const handleDelete = async (id, index) => {
+    if (selectedType === "User") {
+      try {
+        await deleteUser(id);
+        setUsers((prevUsers) => prevUsers.filter((_, i) => i !== index));
+        console.log(`User with ID ${id} deleted successfully.`);
+      } catch (error) {
+        console.error("Error deleting user:", error);
+      }
+    }
+  };
+
+  const renderTableHeaders = () => {
+    if (selectedType === "User") {
+      return (
+        <Tr>
+          <Th>Name</Th>
+          <Th>Email</Th>
+          <Th>Action</Th>
+        </Tr>
+      );
+    } else if (selectedType === "Doctor") {
+      return (
+        <Tr>
+          <Th>Name</Th>
+          <Th>Email</Th>
+          <Th>Contact</Th>
+          <Th>Address</Th>
+          <Th>Hospital</Th>
+          <Th>Action</Th>
+        </Tr>
+      );
+    }
+  };
+
+  const renderTableRows = () => {
+    if (selectedType === "User") {
+      return users.map((user, index) => (
+        <Tr key={user.userId}>
+        <Td>{user.username}</Td>
+        <Td>{user.email}</Td>
+        <Td>
+          <Button
+            colorScheme="red"
+            onClick={() => handleDelete(user.userId, index)} // Pass user ID and index
+          >
+            Delete
+          </Button>
+        </Td>
+      </Tr>
+    ))
+    } else if (selectedType === "Doctor") {
+      return doctors.map((doctor, index) => (
+        <Tr key={index}>
+          <Td>{doctor.name}</Td>
+          <Td>{doctor.email}</Td>
+          <Td>{doctor.contact}</Td>
+          <Td>{doctor.address}</Td>
+          <Td>{doctor.hospital}</Td>
+          <Td>
+            <Button colorScheme="green" mr="3">
+              Update
+            </Button>
+            <Button colorScheme="red" ml="3">
+              Delete
+            </Button>
+          </Td>
+        </Tr>
+      ));
+    }
+  };
 
   return (
     <Box pt={{ base: "50px", md: "100px", xl: "10px" }}>
@@ -110,37 +174,8 @@ export default function Settings() {
       </Box>
       <SimpleGrid mb="20px" columns={1} spacing={{ base: "20px", xl: "20px" }}>
         <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Name</Th>
-              {/* <Th>Address</Th> */}
-              <Th>Email</Th>
-              {/* <Th>Contact</Th> */}
-              {selectedType === "Doctor" && <Th>Hospital</Th>}
-              <Th>Action</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {tableData.map((data, index) => (
-              <Tr key={index}>
-                <Td>{data.username}</Td>
-                {/* <Td>{data.address}</Td> */}
-                <Td>{data.email}</Td>
-                {/* <Td>{data.contact}</Td> */}
-                {selectedType === "Doctor" && <Td>{data.hospital}</Td>}
-                <Td style={{ padding: "10px", marginLeft:"10px", gap:"10px" }}>
-                  <Button colorScheme="green" >
-                    Update
-                  </Button>
-                 
-                  <Button colorScheme="red" >
-                    Delete
-                  </Button>
-                </Td>
-                
-              </Tr>
-            ))}
-          </Tbody>
+          <Thead>{renderTableHeaders()}</Thead>
+          <Tbody>{renderTableRows()}</Tbody>
         </Table>
       </SimpleGrid>
 
@@ -189,7 +224,6 @@ export default function Settings() {
             <Input
               placeholder="Password"
               name="password"
-              value={doctorData.password}
               onChange={handleInputChange}
               mb="10px"
             />

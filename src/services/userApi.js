@@ -27,15 +27,12 @@ export const insertAllUsers = (userData) => {
 };
 
 // Delete user
-export const deleteUser = (userId) => {
-    return new Promise((resolve, reject) => {
-      axios.delete(`${BASE_URL}/delete-user/${userId}`)
-        .then((res) => {
-          resolve(res.data);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  };
 
+export const deleteUser = async (userId) => {
+  try {
+    const response = await axios.delete(`/users/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error("Error deleting user: " + error.message);
+  }
+};
