@@ -33,46 +33,7 @@ const insertAppointment = async (
   }
 };
 
-// Function to get an appointment by ID
-const getAppointmentsByDoctorId = async (doctorId) => {
-  try {
-    const query = `
-      SELECT 
-        id, patient_name, email, schedule_date, 
-        schedule_time, contact, status, doctor_id 
-      FROM appointments 
-      WHERE doctor_id = $1;
-    `;
-    const values = [doctorId];
-    const result = await pool.query(query, values);
-    return result.rows; // Return an array of appointments for the doctor
-  } catch (error) {
-    throw new Error('Error fetching appointments by doctor ID: ' + error.message);
-  }
-};
-
-
-// Function to update the status of an appointment
-const updateAppointmentStatus = async (id, status) => {
-  try {
-    const query = `
-      UPDATE appointments 
-      SET status = $1 
-      WHERE id = $2 
-      RETURNING *;
-    `;
-    const values = [status, id];
-    const result = await pool.query(query, values);
-    return result.rows[0]; // Return the updated appointment record
-  } catch (error) {
-    throw new Error('Error updating appointment status: ' + error.message);
-  }
-};
-
 module.exports = {
   getAllAppointments,
   insertAppointment,
-  getAppointmentsByDoctorId,
-  updateAppointmentStatus,
 };
-
