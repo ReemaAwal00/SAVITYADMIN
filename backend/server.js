@@ -20,21 +20,15 @@ const cors = require('cors');
 // }));
 
 // Allow CORS for specific origins
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "http://localhost:3004", "http://localhost:3002"];
+// const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "http://localhost:3004", "http://localhost:3002"];
 app.use(
   cors({
-    origin: (origin, callback) => {
-      
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: '*', // Allows all origins
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true, // Enable cookies if needed
+    credentials: true, // Note: 'credentials: true' doesn't work with '*' in the `origin` setting
   })
 );
+
 
 // Middleware
 app.use(express.json());
