@@ -9,4 +9,10 @@ router.get('/', appointmentController.getAllAppointments);
 // POST endpoint to add a new appointment
 router.post('/', appointmentController.addAppointment);
 
+// GET endpoint to fetch appointments by doctor ID
+router.get('/doctor/:doctorId', appointmentController.getAppointmentsByDoctorId);
+
+// PUT endpoint to update appointment status
+router.put('/:id/status', appointmentController.updateAppointmentStatus);
+
 module.exports = router;

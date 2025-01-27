@@ -1,6 +1,19 @@
 // bookingController.js
-const { insertBooking, getAllBookings } = require('../models/bookingModel');
+const { insertBooking, getAllBookings, getBookingsByDoctorId } = require('../models/bookingModel');
 
+// Controller function to get bookings by doctor ID
+const getBookingsByDoctorIdController = async (req, res) => {
+  try {
+    const { doctorId } = req.params;
+    const bookings = await getBookingsByDoctorId(doctorId); // Correct function call
+    res.status(200).json(bookings);
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error retrieving bookings by doctor ID',
+      error: error.message
+    });
+  }
+};
 // Controller function to handle fetching all bookings
 const getAllBooking = async (req, res) => {
   try {
@@ -32,7 +45,11 @@ const addBooking = async (req, res) => {
   }
 };
 
+// Controller function to get bookings by doctor ID
+
 module.exports = {
   getAllBooking,
   addBooking,
+  getBookingsByDoctorId: getBookingsByDoctorIdController
+
 };
