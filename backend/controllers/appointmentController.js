@@ -15,16 +15,16 @@ const getAllAppointments = async (req, res) => {
 const addAppointment = async (req, res) => {
   const { 
     patientName, email, scheduleDate, 
-    scheduleTime, contact, doctorId, userId
+    scheduleTime, contact, doctorId
   } = req.body;
 
-  if (!patientName  || !email || !scheduleDate || !scheduleTime || !contact ||  !doctorId || !userId) {
+  if (!patientName  || !email || !scheduleDate || !scheduleTime || !contact ||  !doctorId) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
     const newAppointment = await appointmentModel.insertAppointment(
-      patientName, email, scheduleDate, scheduleTime, contact, doctorId, userId
+      patientName, email, scheduleDate, scheduleTime, contact, doctorId
     );
     res.status(201).json({
       message: 'Appointment added successfully',

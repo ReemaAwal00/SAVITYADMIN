@@ -24,7 +24,20 @@ const insertBooking = async (scheduleDate, scheduleTime, doctorId) => {
   }
 };
 
+// Function to get bookings by doctor ID
+const getBookingsByDoctorId = async (doctorId) => {
+  try {
+    const query = 'SELECT id, schedule_date, schedule_time, doctor_id FROM booking WHERE doctor_id = $1';
+    const result = await pool.query(query, [doctorId]);
+    return result.rows;
+  } catch (error) {
+    throw new Error('Error fetching bookings by doctor ID: ' + error.message);
+  }
+};
+
 module.exports = {
   getAllBookings,
   insertBooking,
+  getBookingsByDoctorId, // Added
+
 };
