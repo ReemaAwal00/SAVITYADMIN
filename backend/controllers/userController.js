@@ -1,5 +1,5 @@
 const userModel = require('../models/userModel');
-const { insertUsers } = require('../models/userModel');
+const { insertUsers, deleteUser } = require('../models/userModel'); // Import the deleteUser function
 
 // Controller function to handle fetching all admin credentials
 const getAllUsers = async (req, res) => {
@@ -11,8 +11,7 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-
-// Controller function to add a doctor
+// Controller function to add a user
 const addUser = async (req, res) => {
   const { username, email, password } = req.body;
 
@@ -32,7 +31,32 @@ const addUser = async (req, res) => {
   }
 };
 
+// Controller function to delete a user
+const deleteUserController = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'userId is required' });
+  }
+
+  try {
+    const deletedUser = await deleteUser(userId); // Call the deleteUser function
+    res.status(200).json({
+      message: 'User deleted successfully',
+      user: deletedUser,
+    });
+  } catch (error) {
+    console.error('Error deleting User:', error.message);
+    if (error.message.includes('not found')) {
+      res.status(404).json({ error: 'User not found' });
+    } else {
+      res.status(500).json({ error: 'An error occurred while deleting the User' });
+    }
+  }
+};
+
 module.exports = {
   getAllUsers,
   addUser,
+  deleteUserController, // Export the deleteUserController function
 };

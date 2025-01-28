@@ -16,11 +16,30 @@ const insertUsers = async (username, email, password) => {
     const result = await pool.query(query, values);
     return result.rows[0]; // Return the inserted user data
   } catch (error) {
-    throw new Error('Error inserting doctor: ' + error.message);
+    throw new Error('Error inserting user: ' + error.message);
+  }
+};
+
+// Function to delete a user by ID
+const deleteUser = async (userId) => {
+  try {
+    const query = 'DELETE FROM users WHERE user_id = $1 RETURNING *';
+    const values = [userId];
+
+    const result = await pool.query(query, values);
+
+    if (result.rowCount === 0) {
+      throw new Error(`User with ID ${userId} not found.`);
+    }
+
+    return result.rows[0]; // Return the deleted user data
+  } catch (error) {
+    throw new Error('Error deleting user: ' + error.message);
   }
 };
 
 module.exports = {
   getAllUsers,
   insertUsers,
+  deleteUser, // Export the deleteUser function
 };

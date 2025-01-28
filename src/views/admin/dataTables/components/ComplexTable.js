@@ -19,41 +19,44 @@ import {
   ModalFooter,
   Input,
 } from "@chakra-ui/react";
-import { insertAllDoctors } from "services/doctorApi";
-import { getAllDoctors } from "services/doctorApi";
-
-const tableDataUser = [
-  { name: "John Doe", address: "123 Main St", email: "john@example.com", contact: "123-456-7890" },
-  { name: "Jane Smith", address: "456 Elm St", email: "jane@example.com", contact: "987-654-3210" },
-];
-
-const tableDataDoctor = [
-  { name: "Dr. Alice", address: "789 Oak St", email: "alice@clinic.com", contact: "555-111-2222", hospital: "City Hospital" },
-  { name: "Dr. Bob", address: "321 Pine St", email: "bob@clinic.com", contact: "555-333-4444", hospital: "Green Valley Clinic" },
-];
+import { insertAllDoctors, getAllDoctors } from "services/doctorApi";
+import { getAllUsers, deleteUser } from "services/userApi";
 
 export default function Settings() {
   const [selectedType, setSelectedType] = useState("User");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [doctorData, setDoctorData] = useState({ name: "", address: "", email: "", contact: "", hospital: "", password:"" });
+  const [doctorData, setDoctorData] = useState({
+    name: "",
+    address: "",
+    email: "",
+    contact: "",
+    hospital: "",
+    password: "",
+  });
   const [doctors, setDoctors] = useState([]);
+  const [users, setUsers] = useState([]);
 
-  // Fetch doctors data from the server on component mount
-  useEffect(() => {
-    const fetchDoctors = async () => {
+  const fetchData = async () => {
+    if (selectedType === "Doctor") {
       try {
-        const response = await getAllDoctors(); // Use the getAllDoctors function from services
-        setDoctors(response); // Assuming response is an array of doctors
+        const response = await getAllDoctors();
+        setDoctors(response);
       } catch (error) {
         console.error("Error fetching doctors:", error);
       }
-    };
+    } else if (selectedType === "User") {
+      try {
+        const response = await getAllUsers();
+        setUsers(response);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    }
+  };
 
-    fetchDoctors();
-  }, []);
-
-
-  const tableData = selectedType === "User" ? tableDataUser : doctors;
+  useEffect(() => {
+    fetchData();
+  }, [selectedType]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -61,29 +64,99 @@ export default function Settings() {
   };
 
   const handleAddDoctor = () => {
-    // Log the doctorData to check if it's ready for submission
-    console.log("Data ready to be sent to the server:", doctorData);
-
-    // Post doctor data to the database
     insertAllDoctors(doctorData)
       .then((response) => {
-        // Optionally handle the response from the API (e.g., success message)
-        console.log('Doctor added:', response);
-        
-        // Update state after successfully adding the doctor
+        console.log("Doctor added:", response);
         setDoctors([...doctors, doctorData]);
-        setDoctorData({ name: "", address: "", email: "", contact: "", hospital: "", password:"" });
+        setDoctorData({
+          name: "",
+          address: "",
+          email: "",
+          contact: "",
+          hospital: "",
+          password: "",
+        });
         setIsModalOpen(false);
       })
       .catch((error) => {
-        // Handle error (e.g., show error message)
-        console.error('Error adding doctor:', error);
+        console.error("Error adding doctor:", error);
       });
   };
 
+  const handleDelete = async (id, index) => {
+    if (selectedType === "User") {
+      try {
+        await deleteUser(id);
+        setUsers((prevUsers) => prevUsers.filter((_, i) => i !== index));
+        console.log(`User with ID ${id} deleted successfully.`);
+      } catch (error) {
+        console.error("Error deleting user:", error);
+      }
+    }
+  };
+
+  const renderTableHeaders = () => {
+    if (selectedType === "User") {
+      return (
+        <Tr>
+          <Th>Name</Th>
+          <Th>Email</Th>
+          <Th>Action</Th>
+        </Tr>
+      );
+    } else if (selectedType === "Doctor") {
+      return (
+        <Tr>
+          <Th>Name</Th>
+          <Th>Email</Th>
+          <Th>Contact</Th>
+          <Th>Address</Th>
+          <Th>Hospital</Th>
+          <Th>Action</Th>
+        </Tr>
+      );
+    }
+  };
+
+  const renderTableRows = () => {
+    if (selectedType === "User") {
+      return users.map((user, index) => (
+        <Tr key={user.userId}>
+        <Td>{user.username}</Td>
+        <Td>{user.email}</Td>
+        <Td>
+          <Button
+            colorScheme="red"
+            onClick={() => handleDelete(user.userId, index)} // Pass user ID and index
+          >
+            Delete
+          </Button>
+        </Td>
+      </Tr>
+    ))
+    } else if (selectedType === "Doctor") {
+      return doctors.map((doctor, index) => (
+        <Tr key={index}>
+          <Td>{doctor.name}</Td>
+          <Td>{doctor.email}</Td>
+          <Td>{doctor.contact}</Td>
+          <Td>{doctor.address}</Td>
+          <Td>{doctor.hospital}</Td>
+          <Td>
+            <Button colorScheme="green" mr="3">
+              Update
+            </Button>
+            <Button colorScheme="red" ml="3">
+              Delete
+            </Button>
+          </Td>
+        </Tr>
+      ));
+    }
+  };
 
   return (
-    <Box pt={{ base: "50px", md: "100px", xl: "10px" }}> {/* Reduced padding under breadcrumbs */}
+    <Box pt={{ base: "50px", md: "100px", xl: "10px" }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb="20px">
         <Select
           w="200px"
@@ -100,30 +173,11 @@ export default function Settings() {
         )}
       </Box>
       <SimpleGrid mb="20px" columns={1} spacing={{ base: "20px", xl: "20px" }}>
-      <Table variant="simple">
-        <Thead>
-          <Tr>
-            <Th>Name</Th>
-            <Th>Address</Th>
-            <Th>Email</Th>
-            <Th>Contact</Th>
-            <Th>Hospital</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {/* Map over the doctors state and display each doctor's data */}
-          {doctors.map((doctor, index) => (
-            <Tr key={index}>
-              <Td>{doctor.name}</Td>
-              <Td>{doctor.address}</Td>
-              <Td>{doctor.email}</Td>
-              <Td>{doctor.contact}</Td>
-              <Td>{doctor.hospital}</Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </SimpleGrid>
+        <Table variant="simple">
+          <Thead>{renderTableHeaders()}</Thead>
+          <Tbody>{renderTableRows()}</Tbody>
+        </Table>
+      </SimpleGrid>
 
       {/* Modal for adding doctor */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
@@ -170,11 +224,9 @@ export default function Settings() {
             <Input
               placeholder="Password"
               name="password"
-              value={doctorData.password}
               onChange={handleInputChange}
               mb="10px"
             />
-            
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="teal" onClick={handleAddDoctor} mr="3">

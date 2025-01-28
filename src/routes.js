@@ -50,13 +50,7 @@ const routes = [
     path: '/members',
     component: <DataTables />,
   },
-  {
-    name: 'Quiz Management',
-    layout: '/admin',
-    path: '/quiz',
-    icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
-    component: <Profile />,
-  },
+ 
  
   
   {
