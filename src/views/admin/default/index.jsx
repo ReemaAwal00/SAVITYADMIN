@@ -23,15 +23,43 @@ import {
   MdBarChart,
   MdFileCopy,
 } from "react-icons/md";
+import { useState, useEffect } from "react";
 
 import TotalSpent from "views/admin/default/components/TotalSpent";
 import WeeklyRevenue from "views/admin/default/components/WeeklyRevenue";
-
-
+import { getAllUsers } from "services/userApi";
+import { getAllDoctors } from "services/doctorApi";
+import { getAllVolunteers } from "services/volunteerApi";
 export default function UserReports() {
   // Chakra Color Mode
   const brandColor = useColorModeValue("brand.500", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalDoctors, setTotalDoctors] = useState(0);
+  const [totalVolunteers, setTotalVolunteers] = useState(0);
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const [users, doctors, volunteers] = await Promise.all([
+          getAllUsers(),
+          getAllDoctors(),
+          getAllVolunteers()
+        ]);
+        
+        setTotalUsers(users.length);
+        setTotalDoctors(doctors.length);
+        setTotalVolunteers(volunteers.length);
+      } catch (error) {
+        console.error("Error fetching counts:", error);
+        // Handle errors appropriately
+      }
+    };
+
+    fetchCounts();
+  }, []);
+
+
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       <SimpleGrid
@@ -49,8 +77,8 @@ export default function UserReports() {
               }
             />
           }
-          name='Earnings'
-          value='350.4'
+          name='Total Users'
+          value={totalUsers.toString()}
         />
         
        
@@ -60,8 +88,8 @@ export default function UserReports() {
               
             </Flex>
           }
-          name='Your balance'
-          value='$1,000'
+          name='Total Doctors'
+          value={totalDoctors.toString()}
         />
         
         <MiniStatistics
@@ -75,8 +103,8 @@ export default function UserReports() {
               }
             />
           }
-          name='Total Projects'
-          value='2935'
+          name='Total Volunteers'
+          value={totalVolunteers.toString()}
         />
       </SimpleGrid>
 
