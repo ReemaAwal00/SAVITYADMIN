@@ -8,5 +8,7 @@ const router = express.Router();
 router.get('/', doctorController.getAllDoctors);
 router.post('/', doctorController.addDoctor);
 
+router.put('/:doctor_id', doctorController.updateDoctor);
+router.delete('/:doctor_id', doctorController.deleteDoctor);
 
 module.exports = router;

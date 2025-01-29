@@ -21,10 +21,16 @@ import {
 } from "@chakra-ui/react";
 import { insertAllDoctors, getAllDoctors } from "services/doctorApi";
 import { getAllUsers, deleteUser } from "services/userApi";
+import { updateDoctor } from "services/doctorApi";
+import { deleteDoctor } from "services/doctorApi";
 
 export default function Settings() {
   const [selectedType, setSelectedType] = useState("User");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+
   const [doctorData, setDoctorData] = useState({
     name: "",
     address: "",
@@ -83,21 +89,39 @@ export default function Settings() {
       });
   };
 
-  const handleDelete = async (user_id) => {  // Changed parameter name to user_id
+// Update handleDelete function
+const handleDelete = async (id) => {
+  try {
     if (selectedType === "User") {
-      try {
-        console.log("Deleting user with user_id:", user_id);  // Log the user_id being deleted
-        await deleteUser(user_id);
-        
-        // Update state by filtering using user_id instead of index
-        setUsers(prevUsers => prevUsers.filter(user => user.user_id !== user_id));
-        console.log(`User with ID ${user_id} deleted successfully.`);
-      } catch (error) {
-        console.error("Error deleting user:", error);
-      }
+      console.log("Deleting user with user_id:", id);
+      await deleteUser(id);
+      setUsers(prevUsers => prevUsers.filter(user => user.user_id !== id));
+    } else if (selectedType === "Doctor") {
+      console.log("Deleting doctor with doctor_id:", id);
+      await deleteDoctor(id);
+      setDoctors(prevDoctors => prevDoctors.filter(doctor => doctor.doctor_id !== id));
+    }
+    console.log(`Deleted successfully. ID: ${id}`);
+  } catch (error) {
+    console.error("Error deleting:", error);
+  }
+};
+
+  
+
+   // Add this function to handle update
+   const handleUpdateDoctor = async () => {
+    try {
+      const updatedDoctor = await updateDoctor(selectedDoctor.doctor_id, selectedDoctor);
+      setDoctors(prev => prev.map(doc => 
+        doc.doctor_id === updatedDoctor.doctor_id ? updatedDoctor : doc
+      ));
+      setIsEditModalOpen(false);
+      console.log("Doctor updated successfully");
+    } catch (error) {
+      console.error("Error updating doctor:", error);
     }
   };
-
   const renderTableHeaders = () => {
     if (selectedType === "User") {
       return (
@@ -147,12 +171,23 @@ export default function Settings() {
           <Td>{doctor.address}</Td>
           <Td>{doctor.hospital}</Td>
           <Td>
-            <Button colorScheme="green" mr="3">
+          <Button 
+              colorScheme="green" 
+              mr="3"
+              onClick={() => {
+                setSelectedDoctor(doctor);
+                setIsEditModalOpen(true);
+              }}
+            >
               Update
             </Button>
-            <Button colorScheme="red" ml="3">
-              Delete
-            </Button>
+            <Button 
+            colorScheme="red" 
+            ml="3"
+            onClick={() => handleDelete(doctor.doctor_id)}
+          >
+            Delete
+          </Button>
           </Td>
         </Tr>
       ));
@@ -237,6 +272,89 @@ export default function Settings() {
               Submit
             </Button>
             <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+       {/* Edit Doctor Modal */}
+       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Doctor</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedDoctor && (
+              <>
+                <Input
+                  placeholder="Name"
+                  name="name"
+                  value={selectedDoctor.name}
+                  onChange={(e) => setSelectedDoctor(prev => ({
+                    ...prev,
+                    name: e.target.value
+                  }))}
+                  mb="10px"
+                />
+                <Input
+                  placeholder="Address"
+                  name="address"
+                  value={selectedDoctor.address}
+                  onChange={(e) => setSelectedDoctor(prev => ({
+                    ...prev,
+                    address: e.target.value
+                  }))}
+                  mb="10px"
+                />
+                <Input
+                  placeholder="Email"
+                  name="email"
+                  value={selectedDoctor.email}
+                  onChange={(e) => setSelectedDoctor(prev => ({
+                    ...prev,
+                    email: e.target.value
+                  }))}
+                  mb="10px"
+                />
+                <Input
+                  placeholder="Contact"
+                  name="contact"
+                  value={selectedDoctor.contact}
+                  onChange={(e) => setSelectedDoctor(prev => ({
+                    ...prev,
+                    contact: e.target.value
+                  }))}
+                  mb="10px"
+                />
+                <Input
+                  placeholder="Hospital"
+                  name="hospital"
+                  value={selectedDoctor.hospital}
+                  onChange={(e) => setSelectedDoctor(prev => ({
+                    ...prev,
+                    hospital: e.target.value
+                  }))}
+                  mb="10px"
+                />
+                <Input
+                  placeholder="Password"
+                  name="password"
+                  type="password"
+                  onChange={(e) => setSelectedDoctor(prev => ({
+                    ...prev,
+                    password: e.target.value
+                  }))}
+                  mb="10px"
+                />
+              </>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="teal" onClick={handleUpdateDoctor} mr="3">
+              Update
+            </Button>
+            <Button variant="ghost" onClick={() => setIsEditModalOpen(false)}>
               Cancel
             </Button>
           </ModalFooter>

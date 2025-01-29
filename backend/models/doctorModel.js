@@ -21,7 +21,50 @@ const insertDoctor = async (name, email, address, contact, hospital, password) =
     }
   };
 
+  // Update doctor by ID
+const updateDoctor = async (doctorId, doctorData) => {
+  try {
+    const query = `UPDATE doctors 
+                   SET name = $1, email = $2, address = $3, 
+                       contact = $4, hospital = $5, password = $6
+                   WHERE doctor_id = $7 RETURNING *`;
+    const values = [
+      doctorData.name,
+      doctorData.email,
+      doctorData.address,
+      doctorData.contact,
+      doctorData.hospital,
+      doctorData.password,
+      doctorId
+    ];
+
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    throw new Error('Error updating doctor: ' + error.message);
+  }}
+
+
+ // In doctorModel.js
+const deleteDoctor = async (doctorId) => {
+  try {
+    // Delete related appointments first
+    await pool.query('DELETE FROM appointments WHERE doctor_id = $1', [doctorId]);
+    
+    // Then delete the doctor
+    const result = await pool.query(
+      'DELETE FROM doctors WHERE doctor_id = $1 RETURNING *',
+      [doctorId]
+    );
+    return result.rows[0];
+  } catch (error) {
+    throw new Error('Error deleting doctor: ' + error.message);
+  }
+};
 module.exports = {
   getAllDoctors,
   insertDoctor,
+  updateDoctor,
+  deleteDoctor // Add this to exports
+
 };

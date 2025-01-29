@@ -27,3 +27,27 @@ export const insertAllDoctors = (doctorData) => {
         });
     });
   };
+
+  export const updateDoctor = (doctorId, doctorData) => {
+    return new Promise((resolve, reject) => {
+      axios.put(`${BASE_URL}/${doctorId}`, doctorData)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  };
+
+  export const deleteDoctor = (doctorId) => {
+    return new Promise((resolve, reject) => {
+      axios.delete(`${BASE_URL}/${doctorId}`)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  };

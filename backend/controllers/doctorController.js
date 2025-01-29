@@ -33,7 +33,59 @@ const addDoctor = async (req, res) => {
   }
 };
 
+
+const updateDoctor = async (req, res) => {
+  const { doctor_id } = req.params;
+  const requiredFields = ['name', 'email', 'address', 'contact', 'hospital', 'password'];
+
+  if (!requiredFields.every(field => req.body[field])) {
+    return res.status(400).json({ 
+      error: 'All fields (name, email, address, contact, hospital, password) are required' 
+    });
+  }
+
+  try {
+    const updatedDoctor = await doctorModel.updateDoctor(doctor_id, req.body);
+    
+    if (!updatedDoctor) {
+      return res.status(404).json({ error: 'Doctor not found' });
+    }
+
+    res.status(200).json({
+      message: 'Doctor updated successfully',
+      doctor: updatedDoctor
+    });
+  } catch (error) {
+    console.error('Error updating doctor:', error.message);
+    res.status(500).json({ error: 'An error occurred while updating the doctor' });
+  }
+};
+
+const deleteDoctor = async (req, res) => {
+  const { doctor_id } = req.params;
+
+  try {
+    const deletedDoctor = await doctorModel.deleteDoctor(doctor_id);
+    
+    if (!deletedDoctor) {
+      return res.status(404).json({ error: 'Doctor not found' });
+    }
+
+    res.status(200).json({
+      message: 'Doctor deleted successfully',
+      doctor: deletedDoctor
+    });
+  } catch (error) {
+    console.error('Error deleting doctor:', error.message);
+    res.status(500).json({ error: 'An error occurred while deleting the doctor' });
+  }
+};
+
 module.exports = {
   getAllDoctors,
   addDoctor,
+  updateDoctor,
+  deleteDoctor // Add this to exports
+
+
 };
