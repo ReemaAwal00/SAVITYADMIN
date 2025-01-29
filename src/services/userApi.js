@@ -30,10 +30,9 @@ export const insertAllUsers = (userData) => {
 
 export const deleteUser = async (userId) => {
   try {
-    const response = await axios.delete(`/users/${userId}`);
+    const response = await axios.delete(`${BASE_URL}/${userId}`);
     return response.data;
   } catch (error) {
     throw new Error("Error deleting user: " + error.message);
   }
 };
-

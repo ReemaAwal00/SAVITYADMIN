@@ -83,12 +83,15 @@ export default function Settings() {
       });
   };
 
-  const handleDelete = async (id, index) => {
+  const handleDelete = async (user_id) => {  // Changed parameter name to user_id
     if (selectedType === "User") {
       try {
-        await deleteUser(id);
-        setUsers((prevUsers) => prevUsers.filter((_, i) => i !== index));
-        console.log(`User with ID ${id} deleted successfully.`);
+        console.log("Deleting user with user_id:", user_id);  // Log the user_id being deleted
+        await deleteUser(user_id);
+        
+        // Update state by filtering using user_id instead of index
+        setUsers(prevUsers => prevUsers.filter(user => user.user_id !== user_id));
+        console.log(`User with ID ${user_id} deleted successfully.`);
       } catch (error) {
         console.error("Error deleting user:", error);
       }
@@ -98,6 +101,7 @@ export default function Settings() {
   const renderTableHeaders = () => {
     if (selectedType === "User") {
       return (
+        
         <Tr>
           <Th>Name</Th>
           <Th>Email</Th>
@@ -127,8 +131,8 @@ export default function Settings() {
         <Td>
           <Button
             colorScheme="red"
-            onClick={() => handleDelete(user.userId, index)} // Pass user ID and index
-          >
+            onClick={() => handleDelete(user.user_id)}  // Pass user.user_id instead of index
+            >
             Delete
           </Button>
         </Td>
